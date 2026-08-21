@@ -1,6 +1,8 @@
 # Huawei Cloud OBS SDK for PHP 8.1+
 
-本分支在保留 `QianXiong\ObsClient` 现有调用方式的前提下，将运行环境和依赖栈升级到现代 PHP 生态，适用于 PHP 8.1–8.5，以及 ThinkPHP、Laravel、Hyperf 等基于 Composer 的框架。
+本分支在保留 `QianXiong\ObsClient` 公共调用方式的前提下，将运行环境和依赖栈升级到现代 PHP 生态，适用于 PHP 8.1–8.5，以及 ThinkPHP、Laravel、Hyperf 等基于 Composer 的框架。
+
+原依赖包： composer require obs/esdk-obs-php
 
 ## 环境要求
 
@@ -22,7 +24,7 @@
 ## 安装
 
 ```bash
-composer require QianXiong/huaweicloud-obs-sdk
+composer require qianxiong/huaweicloud-obs-sdk
 ```
 
 开发或验证本源码时：
@@ -45,7 +47,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use QianXiong\ObsClient;
 
-$config = require __DIR__ . '/config/obs.php';
+$config = require __DIR__ . '/config/obs.php'; // 由项目自己的 config 文件返回客户端配置
 $client = new ObsClient($config);
 
 $result = $client->putObject([
@@ -56,6 +58,14 @@ $result = $client->putObject([
 ```
 
 项目所需变量可参考仓库中的 `.env.example`。生产环境请从环境变量或密钥服务读取 AK/SK，不要把真实 `.env` 或凭证提交到代码仓库。HTTPS 默认应保持证书校验；如使用私有 CA，可将 `ssl_verify` 设置为 CA 文件路径。
+
+仓库自带示例使用 `examples/config.php` 和 `examples/bootstrap.php`，运行前请将 `.env.example` 的变量注入当前进程，例如：
+
+```bash
+cp .env.example .env
+set -a; . ./.env; set +a
+php examples/ListObjectsSample.php
+```
 
 ## 框架集成
 
@@ -194,74 +204,4 @@ Hyperf/Swoole 常驻进程中可以复用凭证固定的客户端，但不要在
 - 保留 `QianXiong\ObsClient`、动态 API 方法、参数数组及返回 `Model` 的方式。
 - `obs-autoloader.php` 仅作为旧项目兼容入口；框架项目必须优先使用 Composer 的 `vendor/autoload.php`。
 - 旧版随 SDK 私带的 Guzzle/Monolog 加载方式已移除，第三方库统一由项目 Composer 解析，避免与框架依赖重复加载。
-- 依赖下限提升到 PHP 8.1；PHP 7.x 不再受支持。
-
-## 版本记录
-
-Version 3.24.9
-
-新特性：
-
-资料&demo:
-
-修复问题：
-1. 优化部分代码；
-2. 优化错误处理逻辑。
-
-----
-Version 3.23.11
-
-新特性：
-1. 新增对象标签相关接口；
-
-资料&demo:
-
-修复问题：
-1. 优化部分代码；
-
-----
-Version 3.23.5
-
-新特性：
-1. 新增自定义域名相关接口；
-2. 新增上传回调参数；
-
-资料&demo:
-
-修复问题：
-1. 优化部分代码；
-
-----
-
-Version 3.22.6
-
-新特性：
-
-资料&demo:
-
-修复问题：
-1. 修复三方依赖冲突的问题；
-
-----
-
-Version 3.19.9
-
-新特性：
-
-资料&demo:
-
-修复问题：
-1. 修复OBS请求时，Host偶尔被异常替换的问题；
-2. 修复特殊场景下，日志模块无法正常工作的问题；
-3. 修复header中的正常特殊字符被url编码的问题；
-
--------------------------------------------------------------------------------------------------
-
-Version 3.1.3
-新特性：
-
-资料&demo:
-
-修复问题：
-1. 修复连接OBS服务超时时，解析request-id报错导致异常信息被截断的问题；
-
+- 依赖下限提升到 PHP 8.1；PHP 7.x 不受支持。
